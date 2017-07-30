@@ -1,0 +1,46 @@
+#!/bin/bash
+
+if [[ ! $1 ]]; then
+	echo "Missing argument"
+	exit 1
+fi
+
+scriptname="$1"
+bindir="${HOME}/bin"
+filename="${bindir}/${scriptname}"
+
+#echo "test" > "$filename"
+
+if [[ -e $filename ]]; then
+	echo " File ${filename} already exists"
+fi
+
+if type "$scriptname"; then
+	echo "There is already a command with ${scriptname}"
+	exit 1
+fi
+
+#check bin directory exists 
+if [[ ! -d $bindir ]]; then
+	if mkdir "$bindir"; then
+		echo "created ${bindir}"
+	else
+
+	 	echo "could not create ${bindir}"
+		exit 1
+	fi
+fi
+
+
+#Create script
+echo '#!/bin/bash' >> "$filename"
+# Add exe permission
+chmod u+x "$filename"
+#open with editor
+if [[ $EDITOR ]]; then
+	$EDITOR "$filename"
+else
+	echo "script created not startig because we dont have default editor set"
+fi
+
+exit 0
