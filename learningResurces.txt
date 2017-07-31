@@ -1,0 +1,2 @@
+cool to learn a lot:
+http://wiki.bash-hackers.org/commands/builtin/printf
