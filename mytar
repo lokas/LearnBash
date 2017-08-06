@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Script that tries to handle tar commands in an inteligant way
+# This is not production ready script its just a demo
+# Use: mytar dir file
+#this will compress the directory dir into file
+
+#Use: mytar filename
+#this will extract the file
+
+if [[ ! $1 ]]; then
+	echo "Need a file or directory as first argument" >&2
+	exit 1
+fi
+
+if [[ ! -e $1 ]]; then
+	echo "File or direcotry $1 not found." >&2
+fi
+
+if [[ -d $1 ]]; then
+	#it is directory create archive
+	operation="c"
+	if [[ ! $2 ]]; then
+		echo "Need name of file or directory to create as secound argument" >&2
+	exit 1
+	fi
+	tarfile="$2"
+	dir="$1"
+else
+	#it is pobobly a file try to extract
+	operation="x"
+	tarfile="$1"
+	dir=""
+fi
+
+printf "operation:%s, file:%s, directory:%s\n" "$operation" "$tarfile" "$dir"
+
+case $tarfile in
+	*.tgz|*.gz|*.gzip)
+		zip="z"
+		echo "Using gzip" >&2;;
+	*.bz|*.bz2|*.bzip|*.bzip2)
+		zip="j"
+		echo "Using bzip2" >&2;;
+	*.Z)
+		zip="Z"
+		echo "Using compress" >&2;;
+	*.tar)
+		zip=""
+		echo "No compression used" >&2;;
+	*)
+		"Unknown extension: ${tarfile}" >&2
+		exit 3;;
+esac
+
+printf "zip:$s" "$zip"
+
+command="tar ${operation}${zip}f $tarfile"
+if [[ $dir ]]; then
+	command="${command} $dir"
+fi
+
+if ! $command; then
+	echo "Error: tar exited with status $?" >&2
+fi
+
+echo "Ok" >&2
+
+printf "command:%s" "$command"
+exit 0
