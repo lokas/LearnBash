@@ -1,12 +1,17 @@
 #!/bin/bash
 
 if [[ ! $1 ]]; then
-	echo "Missing argument"
+	echo "Missing argument" >&2
 	exit 1
 fi
 
+declare open_editor=""
+if [[ $# -eq 1 ]]; then
+	open_editor="true"
+fi
+
 scriptname="$1"
-bindir="${HOME}/bin"
+declare -r bindir="${HOME}/bin"
 filename="${bindir}/${scriptname}"
 
 #echo "test" > "$filename"
