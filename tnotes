@@ -1,17 +1,36 @@
-#!/bin/bash
+#!/bin/bash 
 
-date=$(date)
+declare -r date=$(date)
 
-topic="$1"
+declare -r topic="$1"
 
-filename="${HOME}/${topic}notes.txt"
+# determine where to save notes
+declare notesdir="${HOME}"
+[[ $NOTESDIR ]] && notesdir="${NOTESDIR}"
+
+if [[ ! -d $notesdir ]]; then
+	mkdir "${notesdir}" 2>/dev/null || { echo "Cannot make dir ${notesdir}" 1>&2; exit 1; }
+fi
+
+declare -r filename="${notesdir}/${topic}notes.txt"
+
+# does file exists if not create it
+
+if [[ ! -f $filename ]]; then
+	touch "${filename}" 2>/dev/null || { echo "Cannot create file" 1>&2; exit 1; } 
+fi
+
+[[ -w $filename ]] || { echo "${filename} is not writeable" 1>&2; exit 1; } 
+
 
 read -p "Your note:" note
 
 if [[ $note ]]; then
 	echo "$date: $note" >> "$filename"
-	echo "Note '$note' saved to $filename"
+	echo "Note '$note' saved to $filename" 1>&2
 else
 	echo "No input; note wasn't saved." 1>&2
+	exit 2
 fi
 
+exit 0
