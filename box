@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# a funciton to draw line
+drawLine () {
+	declare line=""
+	declare char="-"
+	for (( i=0; i<$1; ++i )); do
+		line="${line}${char}"	
+	done
+	printf "%s\n" "$line"
+}
+
+[[ ! $1 ]] && exit 0
+
+declare -i len="${#1} + 4"
+drawLine len
+printf "| %s | \n" "$1"
+drawLine len

@@ -56,6 +56,5 @@ if [[ $open_editor ]]; then
 	else
 		echo "script created not startig because we dont have default editor set" >&2	     fi
 fi
-fi
 
 exit 0

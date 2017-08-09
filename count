@@ -1,17 +1,32 @@
 #!/bin/bash
 
 # This script print a range of numbers
-# Usage: count [-r] [-b n] [-s n] stop
+usage () {
+ cat <<END
+count [-r] [-b n] [-s n] stop
+
+Print each number up to stop, beging at 0
 #-b gives a number to begin with (default: 0)
 #-r reverse count
 #-s sets step size (default: 1)
 # counting will stop at stop
+END
+}
+
+#function to handle error
+#First argument: error message to print
+#Secound argument: exit code to exit script with
+error () {
+	echo "Error: $1"
+	usage
+	exit $2
+} >&2
 
 declare reverse=""
 declare -i begin=0
 declare -i step=1
 
-while getopts ":b:s:r" opt; do
+while getopts ":hb:s:r" opt; do
 	case $opt in
 		r)
 			reverse="yes"
@@ -25,13 +40,15 @@ while getopts ":b:s:r" opt; do
 			[[ ${OPTARG} =~ ^[0-9]+$ ]] || { echo "${OPTARG} is not a number" >&2; exit 1; }
 			step="${OPTARG}"
 			;;
+		h)
+			usage
+			exit 0
+			;;
 		:)
-			echo "Option -${OPTARG} is missing argument" >&2
-			exit 1
+			error "Option -${OPTARG} is missing argument" 2
 			;;
 		\?)
-			echo "Unknown option: -${OPTARG}" >&2
-			exit 1
+			error "Unknown option: -${OPTARG}" 3
 			;;
 	esac
 done

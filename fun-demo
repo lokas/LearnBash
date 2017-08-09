@@ -1,0 +1,20 @@
+#!/bin/bash
+
+sum() {
+	echo $(( $1 + $2 ))
+}
+
+starts_with_a () {
+	[[ $1 == [aA]* ]];
+# above is same if we return this >> return $?
+}
+
+echo $( sum 4 5 )
+
+if starts_with_a ax; then
+	echo "yup"
+else
+	echo "nope"
+fi
+
+
