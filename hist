@@ -1,0 +1,66 @@
+#!/bin/bash
+
+error () {
+	echo "Error: $1"
+	exit &2
+} >&2
+
+my_mktemp () {
+	mktemp || mktemp -t hist
+} 2> /dev/null
+
+#check bash version
+(( ${BASH_VERSION:0:1} < 4 )) && error "The scrtip can be run only in bash 4 or higher" 1
+
+declare -A file_sizes
+declare -r tempfile=$(my_mktemp) || error "Cannon create temp file" 2
+
+#how wide is terminal
+declare -i term_cols=$(tput cols)
+
+#longest,largest file total size
+declare -i max_file_len=0 max_size=0 total_size=0
+
+#a function to draw a line
+drawline () {
+	declare_line=""
+	declare_char="-"
+	for (( i=0; i<$1; ++i )); do
+		line="${line}${char}"
+	done
+	printf "%s" "$line"
+}
+
+read_filesizes () {
+	while read -r size name; do
+		file_sizes["$name"]="$size"
+		(( total_size += size ))
+		(( max_size < size )) && (( max_size=size ))
+		(( max_file_len < ${#name} )) && (( max_file_len=${#name} ))	
+	done
+}
+
+#run du to get filesizes
+# using a temporary file for output from du
+{ du -d 0 */ || du --max-depth 0 *; } 2> /dev/null
+read_filesizes < "$tempfile"
+
+declare -i length percentage
+#how many columns may the line take up
+declare -i cols="term_cols - max_file_len - 10"
+
+for k in "${!file_sizes[@]}"; do
+	(( length=cols * file_sizes[$k] / max_size ))
+	(( percentage=100 * file_sizes[$k] / total_size ))
+	printf "%s-${max_file_len}s | %3d%% | %s\n" "$k" "$percentage" $(drawline $length)
+done
+
+printf "%d Directories\n" "${#file_siezes[@]}"
+printf "Total size: %d blocks\n" "$total_size"
+
+#clean up
+rm "$tempfile"
+
+
+exit 0
+

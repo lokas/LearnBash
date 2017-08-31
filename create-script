@@ -54,7 +54,8 @@ if [[ $open_editor ]]; then
 	if [[ $EDITOR ]]; then
 		$EDITOR "$filename"
 	else
-		echo "script created not startig because we dont have default editor set" >&2	     fi
+		echo "script created not startig because we dont have default editor set" >&2	     	 fi
 fi
 
-exit 0
+exit 0;
+

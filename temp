@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo $BASH_VERSION
+declare ver=${BASH_VERSION:0:1}
+declare -ir checkVer=$1
+echo $ver
+
+(( $ver <= $checkVer )) || echo "this is not expected version $1" 
